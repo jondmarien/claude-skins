@@ -223,13 +223,16 @@ function Get-PowerShellLaunch {
 
 function Get-StatusLineCommand {
     param([string]$ScriptPath)
-    $launch = Get-PowerShellLaunch
     $fwd = ($ScriptPath -replace "\\", "/")
-    $fileArg = $fwd
-    if ($fwd.IndexOf(" ") -ge 0) {
-        $fileArg = '"' + $fwd + '"'
+    if ($fwd.IndexOf(" ") -lt 0) {
+        # run-engine.cmd picks pwsh, then Windows PowerShell 5.1, at every run.
+        # A bare .cmd path runs from both Git Bash and PowerShell.
+        $launcher = (Join-Path (Split-Path -Parent $ScriptPath) "run-engine.cmd") -replace "\\", "/"
+        return ($launcher + " " + (Split-Path -Leaf $ScriptPath))
     }
-    return ($launch.Name + " -NoProfile -ExecutionPolicy Bypass -File " + $fileArg)
+    # shortcut: a quoted .cmd path needs "&" in PowerShell but not in bash, so with a
+    # space in the path use Windows PowerShell 5.1, which ships with every Windows.
+    return ('powershell -NoProfile -ExecutionPolicy Bypass -File "' + $fwd + '"')
 }
 
 function New-EngineHookEntry {
@@ -238,17 +241,21 @@ function New-EngineHookEntry {
         [string]$Matcher = "",
         [int]$Timeout = 0
     )
-    $launch = Get-PowerShellLaunch
-    $fwd = ($ScriptPath -replace "\\", "/")
+    # Exec form through run-engine.cmd: pwsh, then Windows PowerShell 5.1,
+    # resolved when the hook runs rather than at install time.
+    $cmdExe = $env:ComSpec
+    if ([string]::IsNullOrWhiteSpace($cmdExe)) {
+        $cmdExe = "cmd.exe"
+    }
+    $launcher = Join-Path (Split-Path -Parent $ScriptPath) "run-engine.cmd"
     $hook = [ordered]@{
         type    = "command"
-        command = $launch.Path
+        command = $cmdExe
         args    = [object[]]@(
-            "-NoProfile",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-File",
-            $fwd
+            "/d",
+            "/c",
+            $launcher,
+            (Split-Path -Leaf $ScriptPath)
         )
     }
     if ($Timeout -gt 0) {
@@ -269,14 +276,16 @@ function Get-SkinHookFragments {
         "skins/engine/skin-tool-hook.sh",
         "skins/engine/activate.ps1",
         "skins/engine/deactivate.ps1",
-        "skins/engine/skin-tool-hook.ps1"
+        "skins/engine/skin-tool-hook.ps1",
+        "skins/engine/run-engine.cmd"
     )
 }
 
 function Get-SkinStatusFragments {
     return @(
         "skins/engine/statusline.sh",
-        "skins/engine/statusline.ps1"
+        "skins/engine/statusline.ps1",
+        "skins/engine/run-engine.cmd"
     )
 }
 

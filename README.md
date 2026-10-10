@@ -189,22 +189,16 @@ Add these to your `~/.claude/settings.json` under `"hooks"`:
 
 ### Windows hooks
 
-`install.ps1` writes these for you. Paths use forward slashes so Git Bash does not eat the backslashes. Hooks use exec form (`command` plus `args`) so the script path is one argument and is not passed through a shell. The status line setting only accepts a single command string, which is how [Claude Code runs it on Windows](https://code.claude.com/docs/en/statusline).
+`install.ps1` writes these for you. Every hook and the status line go through `engine/run-engine.cmd`. Each time it runs, that launcher uses PowerShell 7 (`pwsh`) if it is on `PATH`. Otherwise it uses Windows PowerShell 5.1 (`powershell`), and then the built-in `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe`. With no PowerShell at all it exits 0, so a hook never fails. `cmd.exe` cannot run the engine itself; it only starts the launcher. Removing or adding PowerShell 7 after install needs no reinstall.
 
-`pwsh` is used when it is on `PATH` at install time. Otherwise the commands use `powershell`.
+Hooks use exec form (`command` plus `args`), so no shell parses the path. See the [hooks reference](https://code.claude.com/docs/en/hooks).
 
 **SessionStart:**
 ```json
 {
   "type": "command",
-  "command": "C:/Program Files/PowerShell/7/pwsh.exe",
-  "args": [
-    "-NoProfile",
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    "C:/Users/you/.claude/skins/engine/activate.ps1"
-  ]
+  "command": "C:\\Windows\\system32\\cmd.exe",
+  "args": ["/d", "/c", "C:\\Users\\you\\.claude\\skins\\engine\\run-engine.cmd", "activate.ps1"]
 }
 ```
 
@@ -216,11 +210,13 @@ Add these to your `~/.claude/settings.json` under `"hooks"`:
 ```json
 "statusLine": {
   "type": "command",
-  "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File C:/Users/you/.claude/skins/engine/statusline.ps1"
+  "command": "C:/Users/you/.claude/skins/engine/run-engine.cmd statusline.ps1"
 }
 ```
 
-Quote the `-File` path if it contains spaces. `powershell` replaces `pwsh` when PowerShell 7 is not installed.
+The status line is a single command string. [Claude Code runs it through Git Bash or PowerShell](https://code.claude.com/docs/en/statusline), so the path uses forward slashes. If your profile path contains a space, the installer writes `powershell -NoProfile -ExecutionPolicy Bypass -File "C:/.../statusline.ps1"` instead. A quoted `.cmd` path needs `&` in PowerShell but not in bash.
+
+The installer keeps an existing `settings.json.backup`, so a reinstall does not overwrite the backup of your original settings. It also leaves a custom `statusLine` alone, and prints the command to use if you want the skin status line.
 
 ## Skill Setup
 

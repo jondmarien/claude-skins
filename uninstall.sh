@@ -46,6 +46,7 @@ SKIN_FRAGMENTS = [
     "skins/engine/activate.ps1",
     "skins/engine/deactivate.ps1",
     "skins/engine/skin-tool-hook.ps1",
+    "skins/engine/run-engine.cmd",
 ]
 
 def hook_text(hook):
@@ -82,6 +83,7 @@ status_command = status_command.replace("\\", "/")
 if isinstance(sl, dict) and (
     "skins/engine/statusline.sh" in status_command
     or "skins/engine/statusline.ps1" in status_command
+    or "skins/engine/run-engine.cmd" in status_command
 ):
     del cfg["statusLine"]
     changed = True

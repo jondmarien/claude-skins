@@ -25,6 +25,11 @@ function Add-WindowsSkinHook {
         $existing = @($hooks[$EventName])
     }
 
+    $newText = Get-HookSearchText @($Entry["hooks"])[0]
+    # Older installs pointed hooks straight at pwsh/powershell; replace those too.
+    $leaf = $Ps1Fragment.Substring($Ps1Fragment.LastIndexOf("/") + 1)
+    $replace = @($ShFragment, $Ps1Fragment, ("skins/engine/run-engine.cmd " + $leaf))
+
     foreach ($current in $existing) {
         if (-not ($current -is [System.Collections.IDictionary]) -or -not $current.Contains("hooks")) {
             continue
@@ -34,7 +39,7 @@ function Add-WindowsSkinHook {
             $currentHooks = @($current["hooks"])
         }
         foreach ($hook in $currentHooks) {
-            if (Test-TextHasFragment (Get-HookSearchText $hook) @($Ps1Fragment)) {
+            if ((Get-HookSearchText $hook) -ceq $newText) {
                 return $false
             }
         }
@@ -52,7 +57,7 @@ function Add-WindowsSkinHook {
         }
         $surviving = New-Object System.Collections.Generic.List[object]
         foreach ($hook in $currentHooks) {
-            if (-not (Test-TextHasFragment (Get-HookSearchText $hook) @($ShFragment))) {
+            if (-not (Test-TextHasFragment (Get-HookSearchText $hook) $replace)) {
                 $surviving.Add($hook)
             }
         }
@@ -77,7 +82,14 @@ function Set-WindowsStatusLine {
             $existing = [string]$Config["statusLine"]["command"]
         }
     }
-    if (Test-TextHasFragment $existing @("skins/engine/statusline.ps1")) {
+    if ($existing -ceq $Command) {
+        Write-SkinLine "    statusLine already configured -- skipped"
+        return $false
+    }
+    if (-not [string]::IsNullOrWhiteSpace($existing) -and -not (Test-TextHasFragment $existing (Get-SkinStatusFragments))) {
+        # Never replace a status line the user set up themselves.
+        Write-SkinLine "    statusLine is a custom command -- left unchanged"
+        Write-SkinLine ("    To use the skin status line, set statusLine.command to: " + $Command)
         return $false
     }
     $Config["statusLine"] = [ordered]@{
@@ -141,7 +153,7 @@ function Invoke-ClaudeSkinsInstall {
     [void](Copy-TreeFiles -SourceDir (Join-Path $sourceRoot "skins") -DestinationDir $dest -Extensions @(".yaml") -Names @())
     Write-SkinLine "  Copied skin definitions"
 
-    [void](Copy-TreeFiles -SourceDir (Join-Path $sourceRoot "engine") -DestinationDir $engineDest -Extensions @(".ps1", ".sh") -Names @("SKILL.md"))
+    [void](Copy-TreeFiles -SourceDir (Join-Path $sourceRoot "engine") -DestinationDir $engineDest -Extensions @(".ps1", ".sh", ".cmd") -Names @("SKILL.md"))
     Write-SkinLine "  Copied engine scripts"
 
     [void](Copy-TreeFiles -SourceDir (Join-Path $sourceRoot "personalities") -DestinationDir $personalityDest -Extensions @(".md") -Names @())
@@ -170,13 +182,18 @@ function Invoke-ClaudeSkinsInstall {
     if (-not (Test-Path -LiteralPath $settings)) {
         Write-Utf8NoBom -Path $settings -Text "{}`n"
     }
-    Copy-Item -LiteralPath $settings -Destination ($settings + ".backup") -Force
-    Write-SkinLine "  Backed up settings.json to settings.json.backup"
+    # Keep the first backup: a reinstall must not replace the pre-skins settings.
+    if (-not (Test-Path -LiteralPath ($settings + ".backup"))) {
+        Copy-Item -LiteralPath $settings -Destination ($settings + ".backup") -Force
+        Write-SkinLine "  Backed up settings.json to settings.json.backup"
+    } else {
+        Write-SkinLine "  settings.json.backup already exists -- kept it"
+    }
 
     try {
         $cfg = Read-SettingsObject $settings
     } catch {
-        throw "settings.json is not valid JSON. Left the original in place; settings.json.backup is a copy of it."
+        throw "settings.json is not valid JSON. Left it unchanged."
     }
 
     $changed = $false
@@ -210,8 +227,6 @@ function Invoke-ClaudeSkinsInstall {
     if (Set-WindowsStatusLine $cfg (Get-StatusLineCommand $statusScript)) {
         $changed = $true
         Write-SkinLine "    Set statusLine: statusline.ps1"
-    } else {
-        Write-SkinLine "    statusLine already configured -- skipped"
     }
 
     if ($changed) {
