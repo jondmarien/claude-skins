@@ -1,7 +1,7 @@
 #!/bin/bash
 # Claude Skins — activate a skin
 # Usage: activate.sh <skin-name>
-# Called by SessionStart hook or /skin command
+# Called by SessionStart hook or /term-skin command
 
 set -euo pipefail
 

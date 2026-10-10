@@ -28,11 +28,11 @@ cd claude-skins
 3. Activate a skin:
 
 ```bash
-# In Claude Code, use the /skin command
-/skin nebula
+# In Claude Code, use the /term-skin command
+/term-skin nebula
 
 # Or set a permanent default
-/skin default
+/term-skin default
 ```
 
 That's it. Missing values inherit from the default skin, so you only need to define what you want to change.
@@ -45,7 +45,7 @@ Native Windows does not need WSL or Git Bash. From the repo directory, in Window
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-If `pwsh` is installed, `pwsh -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` works the same way. The installer copies the skins into `$env:USERPROFILE\.claude\skins` and points Claude Code at the `.ps1` engine. Restart Claude Code, then run `/skin nebula`.
+If `pwsh` is installed, `pwsh -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` works the same way. The installer copies the skins into `$env:USERPROFILE\.claude\skins` and points Claude Code at the `.ps1` engine. Restart Claude Code, then run `/term-skin nebula`.
 
 `install.sh` remains the macOS and Linux installer. It still wires only the bash hooks, and it also copies the `.ps1` files next to them. On Windows, use `install.ps1`.
 
@@ -57,7 +57,7 @@ If you prefer to set things up yourself:
 2. Copy `engine/` to `~/.claude/skins/engine/`
 3. Make engine scripts executable: `chmod +x ~/.claude/skins/engine/*.sh`
 4. Add hooks to your `~/.claude/settings.json` (see [Hooks Setup](#hooks-setup))
-5. Create the `/skin` skill (see [Skill Setup](#skill-setup))
+5. Create the `/term-skin` skill (see [Skill Setup](#skill-setup))
 
 On Windows, copy the same directories under `$env:USERPROFILE\.claude\` and skip `chmod`. Hook and status-line commands are in [Hooks Setup](#hooks-setup).
 
@@ -139,10 +139,10 @@ Dark academia spellbook — deep brown parchment, golden arcane sigils, patient 
 ## Commands
 
 ```
-/skin              List available skins, highlight active one
-/skin <name>       Switch to a skin immediately
-/skin reset        Deactivate skin, restore terminal defaults
-/skin default      Set current skin as permanent default
+/term-skin              List available skins, highlight active one
+/term-skin <name>       Switch to a skin immediately
+/term-skin reset        Deactivate skin, restore terminal defaults
+/term-skin default      Set current skin as permanent default
 ```
 
 Switching is instant — no restart needed.
@@ -220,7 +220,7 @@ The installer keeps an existing `settings.json.backup`, so a reinstall does not 
 
 ## Skill Setup
 
-Create `~/.claude/skills/skin/SKILL.md` — see [engine/SKILL.md](engine/SKILL.md) for the content.
+Create `~/.claude/skills/term-skin/SKILL.md` — see [engine/SKILL.md](engine/SKILL.md) for the content.
 
 ## Creating Your Own Skin
 

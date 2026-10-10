@@ -2,7 +2,7 @@
 # Claude Skins - Windows installer.
 # Copies skins, engine, and personalities into $env:USERPROFILE\.claude\skins,
 # patches settings.json so Claude Code launches the .ps1 engine, and installs
-# the /skin skill. macOS and Linux users should keep using install.sh.
+# the /term-skin skill. macOS and Linux users should keep using install.sh.
 
 param()
 
@@ -136,7 +136,7 @@ function Invoke-ClaudeSkinsInstall {
     $dest = Get-SkinsDir
     $engineDest = Get-EngineDir
     $settings = Join-Path $claudeDir "settings.json"
-    $skillDir = Join-Path (Join-Path $claudeDir "skills") "skin"
+    $skillDir = Join-Path (Join-Path $claudeDir "skills") "term-skin"
 
     Write-SkinLine "Installing Claude Skins..."
     if (-not (Test-Path -LiteralPath $dest)) {
@@ -174,6 +174,7 @@ function Invoke-ClaudeSkinsInstall {
     }
     Copy-Item -LiteralPath (Join-Path $engineDest "SKILL.md") -Destination (Join-Path $skillDir "SKILL.md") -Force
     Write-SkinLine ("  Created " + (Join-Path $skillDir "SKILL.md"))
+    Remove-LegacySkinSkill
 
     Write-SkinLine "  Patching $settings..."
     if (-not (Test-Path -LiteralPath $claudeDir)) {
@@ -245,7 +246,7 @@ function Invoke-ClaudeSkinsInstall {
     $ErrorActionPreference = $savedPreference
 
     Write-SkinLine ""
-    Write-SkinLine "Done! Restart Claude Code and run: /skin nebula"
+    Write-SkinLine "Done! Restart Claude Code and run: /term-skin nebula"
     Write-SkinLine ""
 }
 

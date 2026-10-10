@@ -1,6 +1,6 @@
 # Author: Jonathan Marien (jondmarien)
 # Claude Skins - Windows uninstaller.
-# Removes the skins directory, the /skin skill, personality links, and the
+# Removes the skins directory, the /term-skin skill, personality links, and the
 # engine hooks from settings.json. Accepts a piped y/N answer. With no
 # console and no piped input, the settings backup is not restored.
 
@@ -140,7 +140,8 @@ function Invoke-ClaudeSkinsUninstall {
         Write-SkinLine "  $skins not found -- skipped"
     }
 
-    $skill = Join-Path (Join-Path $claudeDir "skills") "skin"
+    Remove-LegacySkinSkill
+    $skill = Join-Path (Join-Path $claudeDir "skills") "term-skin"
     if (Test-Path -LiteralPath $skill) {
         Remove-Item -LiteralPath $skill -Recurse -Force
         Write-SkinLine "  Removed $skill"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Skins — deactivate/restore terminal
-# Called by SessionEnd hook or /skin reset
+# Called by SessionEnd hook or /term-skin reset
 
 set -euo pipefail
 

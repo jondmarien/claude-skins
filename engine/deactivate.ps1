@@ -1,6 +1,6 @@
 # Author: Jonathan Marien (jondmarien)
 # Claude Skins - deactivate and restore the terminal.
-# Called by the SessionEnd hook or /skin reset.
+# Called by the SessionEnd hook or /term-skin reset.
 
 . (Join-Path $PSScriptRoot "common.ps1")
 . (Join-Path $PSScriptRoot "parse-yaml.ps1")
