@@ -37,6 +37,18 @@ cd claude-skins
 
 That's it. Missing values inherit from the default skin, so you only need to define what you want to change.
 
+### Windows (PowerShell)
+
+Native Windows does not need WSL or Git Bash. From the repo directory, in Windows PowerShell 5.1 or PowerShell 7:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+If `pwsh` is installed, `pwsh -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` works the same way. The installer copies the skins into `$env:USERPROFILE\.claude\skins` and points Claude Code at the `.ps1` engine. Restart Claude Code, then run `/skin nebula`.
+
+`install.sh` remains the macOS and Linux installer. It still wires only the bash hooks, and it also copies the `.ps1` files next to them. On Windows, use `install.ps1`.
+
 ## Manual Installation
 
 If you prefer to set things up yourself:
@@ -46,6 +58,8 @@ If you prefer to set things up yourself:
 3. Make engine scripts executable: `chmod +x ~/.claude/skins/engine/*.sh`
 4. Add hooks to your `~/.claude/settings.json` (see [Hooks Setup](#hooks-setup))
 5. Create the `/skin` skill (see [Skill Setup](#skill-setup))
+
+On Windows, copy the same directories under `$env:USERPROFILE\.claude\` and skip `chmod`. Hook and status-line commands are in [Hooks Setup](#hooks-setup).
 
 ## Available Skins
 
@@ -173,6 +187,41 @@ Add these to your `~/.claude/settings.json` under `"hooks"`:
 }
 ```
 
+### Windows hooks
+
+`install.ps1` writes these for you. Paths use forward slashes so Git Bash does not eat the backslashes. Hooks use exec form (`command` plus `args`) so the script path is one argument and is not passed through a shell. The status line setting only accepts a single command string, which is how [Claude Code runs it on Windows](https://code.claude.com/docs/en/statusline).
+
+`pwsh` is used when it is on `PATH` at install time. Otherwise the commands use `powershell`.
+
+**SessionStart:**
+```json
+{
+  "type": "command",
+  "command": "C:/Program Files/PowerShell/7/pwsh.exe",
+  "args": [
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "C:/Users/you/.claude/skins/engine/activate.ps1"
+  ]
+}
+```
+
+**SessionEnd:** same shape, with `deactivate.ps1`.
+
+**PostToolUse:** same shape, with `skin-tool-hook.ps1`, `"timeout": 5`, and matcher `Bash|PowerShell|Write|Edit|MultiEdit|Grep|Glob`. The `PowerShell` tool is included so command sounds still fire when Claude Code's shell tool is PowerShell rather than Bash. See the [hooks reference](https://code.claude.com/docs/en/hooks).
+
+**Status line:**
+```json
+"statusLine": {
+  "type": "command",
+  "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File C:/Users/you/.claude/skins/engine/statusline.ps1"
+}
+```
+
+Quote the `-File` path if it contains spaces. `powershell` replaces `pwsh` when PowerShell 7 is not installed.
+
 ## Skill Setup
 
 Create `~/.claude/skills/skin/SKILL.md` — see [engine/SKILL.md](engine/SKILL.md) for the content.
@@ -183,6 +232,7 @@ Create `~/.claude/skills/skin/SKILL.md` — see [engine/SKILL.md](engine/SKILL.m
 2. Customize colors, banner art, branding
 3. Optionally add `personalities/<name>.md` for Claude's voice
 4. Test: `~/.claude/skins/engine/activate.sh <name>`
+   Windows: `pwsh -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\skins\engine\activate.ps1" <name>`
 
 See [SCHEMA.md](SCHEMA.md) for the full reference and [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -190,7 +240,9 @@ See [SCHEMA.md](SCHEMA.md) for the full reference and [CONTRIBUTING.md](CONTRIBU
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 - Terminal with OSC sequence support (iTerm2, Kitty, WezTerm, Ghostty, Alacritty, Windows Terminal, Terminal.app)
-- Tool sounds work on macOS, Linux (PulseAudio/ALSA), and WSL — see [COMPATIBILITY.md](COMPATIBILITY.md)
+- macOS / Linux: bash, plus `python3` for the installer and `jq` for the bash status line
+- Windows: Windows PowerShell 5.1 or PowerShell 7+. No WSL, Git Bash, Python, or `jq`. `git` is optional and only used for the branch in the status line
+- Tool sounds: macOS, Linux (PulseAudio/ALSA), WSL, and native Windows — see [COMPATIBILITY.md](COMPATIBILITY.md)
 
 ## Using a Skin? Let Us Know
 

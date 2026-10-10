@@ -24,6 +24,13 @@ cp "$SCRIPT_DIR/engine/"*.sh "$DEST/engine/"
 chmod +x "$DEST/engine/"*.sh
 echo "  Copied engine scripts"
 
+# PowerShell twins live next to the bash scripts. install.sh still wires the
+# bash hooks; install.ps1 is what points Claude Code at the .ps1 files.
+if compgen -G "$SCRIPT_DIR/engine/*.ps1" > /dev/null; then
+  cp "$SCRIPT_DIR/engine/"*.ps1 "$DEST/engine/"
+  echo "  Copied PowerShell engine scripts"
+fi
+
 cp "$SCRIPT_DIR/personalities/"*.md "$DEST/personalities/"
 echo "  Copied personality files"
 
