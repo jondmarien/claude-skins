@@ -28,7 +28,8 @@ function Invoke-SiblingEngine {
     if ($ScriptArguments -and $ScriptArguments.Length -gt 0) {
         $argList += $ScriptArguments
     }
-    & $exe @argList
+    # Out-Host so the child banner/errors reach stdout instead of the function return value.
+    & $exe @argList | Out-Host
     return $LASTEXITCODE
 }
 

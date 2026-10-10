@@ -418,6 +418,13 @@ function ConvertTo-PrettyJson {
     if ($Value -is [byte] -or $Value -is [int16] -or $Value -is [int] -or $Value -is [int64]) {
         return $Value.ToString([Globalization.CultureInfo]::InvariantCulture)
     }
+    if ($Value.GetType().FullName -ceq "System.Numerics.BigInteger") {
+        return $Value.ToString([Globalization.CultureInfo]::InvariantCulture)
+    }
+    if ($Value -is [datetime]) {
+        # PS 7.0-7.4 fallback: no -DateKind, so write the round-trip ISO form.
+        return (ConvertTo-JsonStringLiteral $Value.ToString("o", [Globalization.CultureInfo]::InvariantCulture))
+    }
     if ($Value -is [double] -or $Value -is [single] -or $Value -is [decimal]) {
         return $Value.ToString("R", [Globalization.CultureInfo]::InvariantCulture)
     }
@@ -472,7 +479,12 @@ function Read-SettingsObject {
     if ([string]::IsNullOrWhiteSpace($raw)) {
         return [ordered]@{}
     }
-    $parsed = $raw | ConvertFrom-Json
+    # PS 7 turns ISO-8601 strings into DateTime; keep them as strings on 7.5+.
+    if ((Get-Command ConvertFrom-Json).Parameters.ContainsKey("DateKind")) {
+        $parsed = $raw | ConvertFrom-Json -DateKind String
+    } else {
+        $parsed = $raw | ConvertFrom-Json
+    }
     $data = ConvertFrom-JsonData $parsed
     if ($data -is [System.Collections.IDictionary]) {
         return $data
