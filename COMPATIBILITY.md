@@ -126,9 +126,9 @@ Claude Code command hooks do not have a controlling terminal, and Windows has no
 - It does not require the Windows `powershell-yaml` module, PSReadLine, or any gallery module.
 - `git` missing, or a directory that is not a repository, leaves the branch slot empty. The hook still exits 0.
 - PowerShell 5.1 was not executed in this repo's Linux test run. The scripts avoid PowerShell 7-only syntax (`&&`, `??`, ternary, `Join-Path` with more than two arguments, `utf8NoBOM` encoding name).
-- `/skin` arguments are trimmed. `skin-command-hook.sh` removes one leading space.
+- `/term-skin` arguments are trimmed. `skin-command-hook.sh` removes one leading space.
 - Skin names must match `^[A-Za-z0-9][A-Za-z0-9._-]*$`. That blocks a `../` path from leaving the skins directory.
-- `/skin` with no arguments lists skins in sorted order. The bash script uses directory order.
+- `/term-skin` with no arguments lists skins in sorted order. The bash script uses directory order.
 
 ---
 

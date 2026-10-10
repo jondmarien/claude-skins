@@ -1,7 +1,7 @@
 # Author: Jonathan Marien (jondmarien)
 # Claude Skins - activate a skin.
 # Usage: pwsh -NoProfile -ExecutionPolicy Bypass -File activate.ps1 <skin-name>
-# Called by the SessionStart hook or /skin. No skin name reads engine/config.yaml.
+# Called by the SessionStart hook or /term-skin. No skin name reads engine/config.yaml.
 
 param(
     [Parameter(Position = 0)]

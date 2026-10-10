@@ -2,14 +2,14 @@
 # Claude Skins — installer
 # Copies skins, engine, personalities into ~/.claude/skins/,
 # auto-patches ~/.claude/settings.json with required hooks,
-# and creates the /skin skill.
+# and creates the /term-skin skill.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEST="$HOME/.claude/skins"
 SETTINGS="$HOME/.claude/settings.json"
-SKILL_DIR="$HOME/.claude/skills/skin"
+SKILL_DIR="$HOME/.claude/skills/term-skin"
 
 # ── Copy files ───────────────────────────────────────────────────────────────
 
@@ -44,11 +44,19 @@ if [[ ! -f "$DEST/engine/current" ]]; then
   echo "default" > "$DEST/engine/current"
 fi
 
-# ── Install /skin skill ──────────────────────────────────────────────────────
+# ── Install /term-skin skill ─────────────────────────────────────────────────
+
+# Older installs used ~/.claude/skills/skin, which collides with other /skin
+# commands (for example the "skins" mod). Remove it only if it is ours.
+OLD_SKILL="$HOME/.claude/skills/skin"
+if grep -q "skins/engine/skin-command-hook" "$OLD_SKILL/SKILL.md" 2>/dev/null; then
+  rm -rf "$OLD_SKILL"
+  echo "  Removed old ~/.claude/skills/skin/ (now /term-skin)"
+fi
 
 mkdir -p "$SKILL_DIR"
 cp "$SCRIPT_DIR/engine/SKILL.md" "$SKILL_DIR/SKILL.md"
-echo "  Created ~/.claude/skills/skin/SKILL.md"
+echo "  Created ~/.claude/skills/term-skin/SKILL.md"
 
 # ── Patch settings.json ──────────────────────────────────────────────────────
 
@@ -178,5 +186,5 @@ echo "Activating default skin (nebula)..."
 # ── Done ─────────────────────────────────────────────────────────────────────
 
 echo ""
-echo "Done! Restart Claude Code and run: /skin nebula"
+echo "Done! Restart Claude Code and run: /term-skin nebula"
 echo ""

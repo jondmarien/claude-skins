@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Skins — uninstaller
-# Removes skins files, the /skin skill, and cleans hooks from settings.json.
+# Removes skins files, the /term-skin skill, and cleans hooks from settings.json.
 
 set -euo pipefail
 
@@ -123,13 +123,21 @@ else
   echo "  ~/.claude/skins/ not found — skipped"
 fi
 
-# ── Remove /skin skill ───────────────────────────────────────────────────────
+# ── Remove /term-skin skill ──────────────────────────────────────────────────
 
-if [[ -d "$HOME/.claude/skills/skin" ]]; then
-  rm -rf "$HOME/.claude/skills/skin"
-  echo "  Removed ~/.claude/skills/skin/"
+# Older installs used ~/.claude/skills/skin, which collides with other /skin
+# commands (for example the "skins" mod). Remove it only if it is ours.
+OLD_SKILL="$HOME/.claude/skills/skin"
+if grep -q "skins/engine/skin-command-hook" "$OLD_SKILL/SKILL.md" 2>/dev/null; then
+  rm -rf "$OLD_SKILL"
+  echo "  Removed old ~/.claude/skills/skin/ (now /term-skin)"
+fi
+
+if [[ -d "$HOME/.claude/skills/term-skin" ]]; then
+  rm -rf "$HOME/.claude/skills/term-skin"
+  echo "  Removed ~/.claude/skills/term-skin/"
 else
-  echo "  ~/.claude/skills/skin/ not found — skipped"
+  echo "  ~/.claude/skills/term-skin/ not found — skipped"
 fi
 
 # ── Remove backup ────────────────────────────────────────────────────────────

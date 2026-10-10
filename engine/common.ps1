@@ -587,6 +587,17 @@ function Install-SkinPersonality {
     Write-Utf8NoBom -Path (Join-Path (Get-EngineDir) "personality-manifest.txt") -Text ($dest + "`n")
 }
 
+function Remove-LegacySkinSkill {
+    # Older installs used skills\skin, which collides with other /skin commands
+    # (for example the "skins" mod). Remove it only if it is ours.
+    $old = Join-Path (Join-Path (Get-ClaudeDir) "skills") "skin"
+    $file = Join-Path $old "SKILL.md"
+    if ((Test-Path -LiteralPath $file) -and (Read-Utf8Text $file).Contains("skins/engine/skin-command-hook")) {
+        Remove-Item -LiteralPath $old -Recurse -Force
+        Write-SkinLine ("  Removed old " + $old + " (now /term-skin)")
+    }
+}
+
 function Get-FileAgeSeconds {
     param([string]$Path)
     if (-not (Test-Path -LiteralPath $Path)) {

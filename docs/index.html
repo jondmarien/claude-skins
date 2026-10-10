@@ -483,7 +483,7 @@
     <div class="install-terminal" id="install-block" onclick="copyInstall()">
       <div class="install-line"><span class="install-prompt">~ %</span> <span class="install-cmd">git clone https://github.com/basicScandal/claude-skins.git</span></div>
       <div class="install-line"><span class="install-prompt">~ %</span> <span class="install-cmd">cd claude-skins && ./install.sh</span></div>
-      <div class="install-line"><span class="install-prompt">~ %</span> <span class="install-cmd">/skin nebula</span> <span class="install-cursor"></span></div>
+      <div class="install-line"><span class="install-prompt">~ %</span> <span class="install-cmd">/term-skin nebula</span> <span class="install-cursor"></span></div>
     </div>
     <p class="copy-hint" id="copy-hint">click to copy</p>
   </section>
@@ -511,7 +511,7 @@
               <span class="palette-dot" style="background:#FF6B35"></span>
               <span class="palette-dot" style="background:#39FF14"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('nebula')">/skin nebula</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('nebula')">/term-skin nebula</span>
           </div>
         </div>
       </div>
@@ -533,7 +533,7 @@
               <span class="palette-dot" style="background:#FFD700"></span>
               <span class="palette-dot" style="background:#66BB6A"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('mythos')">/skin mythos</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('mythos')">/term-skin mythos</span>
           </div>
         </div>
       </div>
@@ -555,7 +555,7 @@
               <span class="palette-dot" style="background:#00E5FF"></span>
               <span class="palette-dot" style="background:#69F0AE"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('netrunner')">/skin netrunner</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('netrunner')">/term-skin netrunner</span>
           </div>
         </div>
       </div>
@@ -577,7 +577,7 @@
               <span class="palette-dot" style="background:#F5E6C8"></span>
               <span class="palette-dot" style="background:#8B3A3A"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('noir')">/skin noir</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('noir')">/term-skin noir</span>
           </div>
         </div>
       </div>
@@ -599,7 +599,7 @@
               <span class="palette-dot" style="background:#5B7553"></span>
               <span class="palette-dot" style="background:#3F4B6E"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('sensei')">/skin sensei</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('sensei')">/term-skin sensei</span>
           </div>
         </div>
       </div>
@@ -621,7 +621,7 @@
               <span class="palette-dot" style="background:#FFB000"></span>
               <span class="palette-dot" style="background:#33FF33"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('mission-control')">/skin mission-control</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('mission-control')">/term-skin mission-control</span>
           </div>
         </div>
       </div>
@@ -643,7 +643,7 @@
               <span class="palette-dot" style="background:#55AAAA"></span>
               <span class="palette-dot" style="background:#FFFFFF"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('retro86')">/skin retro86</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('retro86')">/term-skin retro86</span>
           </div>
         </div>
       </div>
@@ -665,7 +665,7 @@
               <span class="palette-dot" style="background:#AAAAAA"></span>
               <span class="palette-dot" style="background:#FFFFFF"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('brutalist')">/skin brutalist</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('brutalist')">/term-skin brutalist</span>
           </div>
         </div>
       </div>
@@ -687,7 +687,7 @@
               <span class="palette-dot" style="background:#D4C4A8"></span>
               <span class="palette-dot" style="background:#6B8E23"></span>
             </div>
-            <span class="skin-command" onclick="event.stopPropagation(); copySkin('grimoire')">/skin grimoire</span>
+            <span class="skin-command" onclick="event.stopPropagation(); copySkin('grimoire')">/term-skin grimoire</span>
           </div>
         </div>
       </div>
@@ -812,7 +812,7 @@
 
     // Copy skin command
     function copySkin(name) {
-      navigator.clipboard.writeText('/skin ' + name);
+      navigator.clipboard.writeText('/term-skin ' + name);
     }
   </script>
   <script data-goatcounter="https://claude-skins.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

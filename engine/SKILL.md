@@ -1,6 +1,6 @@
 ---
-name: skin
-description: Switch Claude Code visual themes (skins). List available skins, activate a skin, reset to defaults, or set a permanent default. USE WHEN user says '/skin', 'change skin', 'switch theme', 'activate skin', or wants to change Claude's visual appearance.
+name: term-skin
+description: Switch claude-skins terminal skins (terminal colors, ASCII banner, status line theme, personality, tool sounds). List skins, activate one, reset the terminal, or set a default. USE WHEN the user types '/term-skin' or asks to change the terminal skin or terminal theme. Not for Claude Code UI skins from other mods.
 ---
 
 # Skin — Claude Code Visual Themes
@@ -9,7 +9,7 @@ Switch between visual skins that change terminal colors, ASCII banners, status l
 
 ## Usage
 
-The user invokes this skill with `/skin` followed by an optional argument.
+The user invokes this skill with `/term-skin` followed by an optional argument.
 
 ## Which script to run
 
@@ -26,7 +26,7 @@ Windows examples below use `pwsh`. If `Get-Command pwsh` fails, substitute `powe
 
 ## Behavior
 
-### `/skin` (no arguments) — List available skins
+### `/term-skin` (no arguments) — List available skins
 
 macOS / Linux:
 
@@ -40,9 +40,9 @@ Windows:
 '{"prompt": "/skin"}' | pwsh -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\skins\engine\skin-command-hook.ps1"
 ```
 
-Display the script's stdout. The script exits 2 so that, when it is also wired as a hook, Claude Code does not send the `/skin` prompt to the model. Still show the list to the user.
+Display the script's stdout. The script exits 2 (its hook-mode "handled" code); that is expected, not an error. Still show the list to the user.
 
-### `/skin <name>` — Activate a skin
+### `/term-skin <name>` — Activate a skin
 
 macOS / Linux:
 
@@ -56,14 +56,14 @@ Windows:
 pwsh -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\skins\engine\activate.ps1" <name>
 ```
 
-After activation, tell the user the skin is active and mention they can set it as default with `/skin default`.
+After activation, tell the user the skin is active and mention they can set it as default with `/term-skin default`.
 
 If the personality file exists, read it and adopt that voice for the rest of the session.
 
 - macOS / Linux: `~/.claude/skins/personalities/<name>.md`
 - Windows: `$env:USERPROFILE\.claude\skins\personalities\<name>.md`
 
-### `/skin reset` — Deactivate and restore
+### `/term-skin reset` — Deactivate and restore
 
 macOS / Linux:
 
@@ -79,7 +79,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\skins\en
 
 Tell the user the terminal has been restored.
 
-### `/skin default` — Set current as permanent default
+### `/term-skin default` — Set current as permanent default
 
 Read the current skin, then set `default_skin` in the engine config to that value.
 
